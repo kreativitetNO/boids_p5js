@@ -49,7 +49,6 @@ class QuadTree {
         if (this.southwest.insert(item)) return;
     }
 
-    // file:///home/christian/Documents/boids_p5js/index.html
     subdivide() {
         this.isDivided = true;
         this.northwest = new QuadTree(new Rectangle(
