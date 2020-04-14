@@ -4,6 +4,10 @@ This project is a [boids](https://en.wikipedia.org/wiki/Boids) implementation in
 
 The repository is tagged with different version numbers for each iteration. The versions are as follows:
 
+## 2.0
+
+Implemented QuadTree and massively improved framerate.
+
 ## 1.0
 
 In this iteration I have implemented a frame counter and some radio buttons to see which is the best way of passing the boids collection to the flock algorithm. The choices are:

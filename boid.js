@@ -12,6 +12,7 @@ class Boid {
   
   drawBoid(x, y, angle) {
     fill(this.group.color);
+    strokeWeight(1);
     stroke(0);
     beginShape();
     vertex(x + cos(angle - HALF_PI - QUARTER_PI) * this.group.size, y + sin(angle - HALF_PI - QUARTER_PI) * this.group.size);
@@ -36,13 +37,6 @@ class Boid {
     let separationCount = 0;
     for (let other of (others || boids)) {
       if (other === this) continue;
-      if (other === undefined) continue;
-      if (filterInFlock) {
-        if (other.position.x < this.position.x - this.group.flockDistance) continue;
-        if (other.position.x > this.position.x + this.group.flockDistance) continue;
-        if (other.position.y < this.position.y - this.group.flockDistance) continue;
-        if (other.position.y > this.position.y + this.group.flockDistance) continue;
-      }
       let toOther = p5.Vector.sub(this.position, other.position);
       let distanceToOther = toOther.mag();
       if (distanceToOther <= this.group.flockDistance) {

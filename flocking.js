@@ -1,19 +1,9 @@
-const canvasWidth = 800;
-const canvasHeight = 600;
-const boidCount = 400;
+const canvasWidth = 1200;
+const canvasHeight = 900;
+const boidCount = 500;
 var frameRateCounter;
 var boids;
 
-const BoidPassingMethod = {
-  PassWholeArray: 1,
-  PassHigherOrderFilterFilteredArray: 2,
-  PassFixedSizeFilteredArray: 3,
-  PassGrowingFilteredArray: 4,
-  UseGlobalArray: 5
-};
-
-var boidPassingMethodRadioButton, boidPassingMethod;
-var filterInFlockCheckbox, filterInFlock;
 var resetFrameRateCounterButton;
 
 function setup() {
@@ -66,46 +56,15 @@ function setup() {
 function draw() {
   background(240, 244, 255);
   updateUIValues();
+  let quadTree = new QuadTree(new Rectangle(0, 0, canvasWidth, canvasHeight), 5);
   for (let boid of boids) {
-    if (boidPassingMethod == BoidPassingMethod.PassWholeArray) {
-      boid.flock(boids);
-    }
-    else if (boidPassingMethod == BoidPassingMethod.PassHigherOrderFilterFilteredArray) {
-      boid.flock(boids.filter(
-        b => b.position.x >= boid.position.x - boid.group.flockDistance &&
-        b.position.x <= boid.position.x + boid.group.flockDistance &&
-        b.position.y >= boid.position.y - boid.group.flockDistance &&
-        b.position.y <= boid.position.y + boid.group.flockDistance));
-    }
-    else if (boidPassingMethod == BoidPassingMethod.PassFixedSizeFilteredArray) {
-      let filteredBoids = new Array(boids.length);
-      let currentIndex = 0;
-      for (let i = 0; i < boids.length; ++i) {
-        if (boids[i].position.x >= boid.position.x - boid.group.flockDistance &&
-            boids[i].position.x <= boid.position.x + boid.group.flockDistance &&
-            boids[i].position.y >= boid.position.y - boid.group.flockDistance &&
-            boids[i].position.y <= boid.position.y + boid.group.flockDistance) {
-          filteredBoids[currentIndex] = boids[i];
-          currentIndex++;
-        }
-      }
-      boid.flock(filteredBoids);
-    }
-    else if (boidPassingMethod == BoidPassingMethod.PassGrowingFilteredArray) {
-      let filteredBoids = [];
-      for (let i = 0; i < boids.length; ++i) {
-        if (boids[i].position.x >= boid.position.x - boid.group.flockDistance &&
-            boids[i].position.x <= boid.position.x + boid.group.flockDistance &&
-            boids[i].position.y >= boid.position.y - boid.group.flockDistance &&
-            boids[i].position.y <= boid.position.y + boid.group.flockDistance) {
-          filteredBoids.push(boids[i]);
-        }
-      }
-      boid.flock(filteredBoids);
-    }
-    else if (boidPassingMethod == BoidPassingMethod.UseGlobalArray) {
-      boid.flock(null);
-    }
+    quadTree.insert(boid);
+    let rectangle = new Rectangle(boid.position.x - boid.group.flockDistance,
+                                  boid.position.y - boid.group.flockDistance,
+                                  boid.group.flockDistance * 2,
+                                  boid.group.flockDistance * 2);
+    let filteredBoids = quadTree.query(rectangle);
+    boid.flock(filteredBoids);
     boid.update();
     boid.show();
     boid.clearForces();
